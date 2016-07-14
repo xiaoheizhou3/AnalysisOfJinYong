@@ -1,5 +1,6 @@
 package pageRank;
 
+
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.*;
 import org.apache.hadoop.io.DoubleWritable;
@@ -11,24 +12,24 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 import java.io.*;
-import java.util.StringTokenizer;
+
 
 public class Sort {
-	public static class SortMapper extends Mapper<Object, Text, DoubleWritable, Text> {
-		protected void map(Object key, Text value,Context context)throws IOException,InterruptedException {
-			StringTokenizer itr = new StringTokenizer(value.toString());
-			while(itr.hasMoreTokens()){
-				String tmp1 = itr.nextToken();
-				String tmp2 = itr.nextToken();
-				context.write(new DoubleWritable(Double.parseDouble(tmp2)), new Text(tmp1));
-			}
+	public static class PageRankMapper extends Mapper<Object, Text, DoubleWritable, Text> {
+		public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
+			String line = value.toString();
+			String[] tuple = line.split("\t");
+			String name = tuple[0];
+			double pr = Double.parseDouble(tuple[1]);//rankֵ
+			context.write(new DoubleWritable(pr), new Text(name));
 		}
-	}	
-
-	public static class SortReducer extends Reducer<DoubleWritable, Text, Text, Text> {
-		protected void reduce(DoubleWritable key, Iterable<Text> values, Context context )throws IOException,InterruptedException {
-			for(Text t : values)
-				context.write(t, new Text("  " + key.toString()));
+	}
+	
+	public static class PageRankReducer extends Reducer<DoubleWritable, Text, Text, Text> {
+		public void reduce(DoubleWritable key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
+			for(Text value : values){
+				context.write(value, new Text(key.toString()));
+			}
 		}
 	}
 	
@@ -36,9 +37,9 @@ public class Sort {
         Configuration conf=new Configuration();
         @SuppressWarnings("deprecation")
 		Job job=new Job(conf);
-        job.setJarByClass(Sort.class);
-        job.setReducerClass(SortReducer.class);
-        job.setMapperClass(SortMapper.class);
+        job.setJarByClass(PageRank.class);
+        job.setReducerClass(PageRankReducer.class);
+        job.setMapperClass(PageRankMapper.class);
         
         job.setMapOutputKeyClass(DoubleWritable.class);
         job.setMapOutputValueClass(Text.class);
