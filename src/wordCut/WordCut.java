@@ -23,12 +23,10 @@ import java.util.Set;
 public class WordCut {
 
     public static class WordCutMapper extends Mapper<Object, Text, Text, Text>{
-//        public static HashSet<String> library;
         public static Text nullText;
         public static Set<String>  library = new HashSet<>();
         
         public void setup(Context context){
- //           library = new HashSet<>();
             nullText = new Text("");
             
             try {
@@ -61,12 +59,12 @@ public class WordCut {
                 }
             }
             if(str.length() != 0){
-            	//����һ�ִʵ����
+            	//锟斤拷锟斤拷一锟街词碉拷锟斤拷锟�
             	/*
             	Text text = new Text(str.toString());
             	context.write(text,nullText);
             	*/
-            	//�����ͳ�������ϵ
+            	//锟斤拷锟斤拷锟酵筹拷锟斤拷锟斤拷锟斤拷系
             	Set<String>  result = new HashSet<>();
             	String[] tmp = str.toString().split(" ");
             	for(int i = 0; i < tmp.length; i++){
@@ -77,12 +75,12 @@ public class WordCut {
             		}
             	}
             	for(String t : result){
-            		//������Ĵ���
+            		//锟斤拷锟斤拷锟斤拷拇锟斤拷锟�
             		/*
             		Text text = new Text(t);
             		context.write(text, nullText);
             		*/
-            		//�������Ĵ���
+            		//锟斤拷锟斤拷锟斤拷拇锟斤拷锟�
             		String[] res = t.split("#");
             		context.write(new Text(res[0]), new Text(res[1]));
             	}
@@ -92,16 +90,16 @@ public class WordCut {
 
     public static class WordCutReducer extends Reducer<Text, Text, Text, Text> {
         public void reduce(Text key,Iterable<Text>values,Context context) throws IOException,InterruptedException{
-        	//�������reduce��ͳ�ƹ��ִ���
+        	//锟斤拷锟斤拷锟斤拷锟絩educe锟斤拷统锟狡癸拷锟街达拷锟斤拷
         	/*
         	int count = 0;
         	for(Text value : values){
         		count++;
-        		value.set("1");//û�õģ�ֻ��Ϊ�˲���valueδʹ�õľ���
+        		value.set("1");//没锟矫的ｏ拷只锟斤拷为锟剿诧拷锟斤拷value未使锟矫的撅拷锟斤拷
         	}
             context.write(key,new Text(" " + count));
             */
-        	//��������reduce��ͳ�Ƹ���
+        	//锟斤拷锟斤拷锟斤拷锟絩educe锟斤拷统锟狡革拷锟斤拷
         	int count = 0;
         	HashMap<String, Integer> map = new HashMap<String, Integer>();
         	Set<String>  nameList = new HashSet<>();
@@ -114,8 +112,8 @@ public class WordCut {
         	}
         	StringBuffer res = new StringBuffer();
         	for(String name : nameList){
-        		float p = (float)map.get(name) / count;
-        		res.append(name + p);
+        		double p = (double)map.get(name) / count;
+        		res.append(name + "," + p);
         		res.append(" | ");
         	}
         	context.write(key, new Text(res.toString()));
