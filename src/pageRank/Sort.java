@@ -21,14 +21,17 @@ public class Sort {
 			String[] tuple = line.split("\t");
 			String name = tuple[0];
 			double pr = Double.parseDouble(tuple[1]);//rank值
-			context.write(new DoubleWritable(pr), new Text(name));
+			context.write(new DoubleWritable(pr), new Text(name));//将rank值作为关键字,hadoop会自动对关键字进行从小到大排序
 		}
 	}
 	
 	public static class SortReducer extends Reducer<DoubleWritable, Text, Text, Text> {
+		//reduce阶段就把key和value再倒过来，变成(人名，rank值)的格式输出即可
 		public void reduce(DoubleWritable key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
 			for(Text value : values){
-				context.write(value, new Text(key.toString()));
+				String keyName = String.format("%-8s", value.toString());
+				//context.write(value, new Text(key.toString()));
+				context.write(new Text(keyName), new Text(key.toString()));
 			}
 		}
 	}

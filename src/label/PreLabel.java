@@ -23,19 +23,6 @@ public class PreLabel {
 			String[] tuple = line.split("\t");
 			String keyName = tuple[0];
 			StringBuffer newLink = new StringBuffer();
-			/*原版标签传播，可用
-			if(tuple.length >= 2){
-				String[] array = tuple[1].split(" | ");
-				for (int i = 0; i < array.length; i++){
-					String[] tmp = array[i].split(",");
-					if(tmp.length >= 2){
-						newLink.append(tmp[0] + " | ");//B | C | D |
-					}
-				}
-				//输出格式为A	 A B | C | D |
-				context.write(new Text(keyName), new Text("#" + keyName.toString() + "#\t" + newLink.toString()));
-			}
-			*/
 			//加强版标签传播，加入了rank值
 			if(tuple.length >= 2){
 	        	//读取人名rank值文件，该文件在main方法中已经加载到distributed Cache中
@@ -43,12 +30,13 @@ public class PreLabel {
 				Path[] localFiles = context.getLocalCacheFiles();
 	        	FileReader fr = new FileReader(localFiles[0].toString());
 	            BufferedReader br = new BufferedReader(fr);
+	            
 	            //按行读取人名列表，加入到map中
 	            HashMap<String, Double> map = new HashMap<>();
 	            String nameRank = new String();
 	            while((nameRank = br.readLine()) != null){
 	            	String[] name_rank = nameRank.split("\t");//分割出人名和rank值
-	            	map.put(name_rank[0], Double.valueOf(name_rank[1]));
+	            	map.put(name_rank[0].trim(), Double.valueOf(name_rank[1]));
 	            }
 	            br.close();
 	            

@@ -10,46 +10,56 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
-public class ExportCSV2 {
-
-    /**
-     * 创建CSV文件
-     * @throws IOException 
-     */
+public class ExportNodeCSV {
+	/*
+	 * 取标签传播的结果和pagerank的结果两个文件
+	 * 生成节点信息
+	 */
 	public static void main(String[] args) throws IOException{
 		createCSV();
 	}
     public static void createCSV() throws IOException {
     	
-        String fileName = "Edge.csv";//文件名称
+        String fileName = "Node.csv";//文件名称
         String filePath = "H:/Test/"; //文件路径
         
         // 表格头
-        Object[] head = { "Source", "Target" };
+        Object[] head = { "ID", "Label", "Class","PageRank" };
         List<Object> headList = Arrays.asList(head);
 
+        //读取人名rank值文件
+        File nameRankFile = new File("H://pageRank");
+        InputStreamReader nrf = new InputStreamReader (new FileInputStream(nameRankFile),"UTF-8");   
+        BufferedReader nbr = new BufferedReader(nrf);
+        HashMap<String,String> map = new HashMap<>();
+        String nameRank = new String();
+        while((nameRank = nbr.readLine()) != null){
+        	String[] tmp = nameRank.split("\t");
+        	String name = tmp[0].trim();
+        	map.put(name, tmp[1]);
+        }
+        nbr.close();
         //数据
         List<List<Object>> dataList = new ArrayList<List<Object>>();
         List<Object> rowList = null;
-        File f = new File("H://relation");   
+        File f = new File("H://label");
         InputStreamReader fr = new InputStreamReader (new FileInputStream(f),"UTF-8");   
         BufferedReader br = new BufferedReader(fr);
         String text = new String();
         while((text = br.readLine()) != null){
         	String[] tmp = text.split("\t");
         	if(tmp.length >= 2){
-        		String[] nameList = tmp[1].split(" | ");
-        		for(int i = 0; i < nameList.length; i++){
-        			String[] name = nameList[i].split(",");
-        			if(name.length >= 2){
-                		rowList = new ArrayList<Object>();
-                		rowList.add(tmp[0]);
-                		rowList.add(name[0]);
-                		dataList.add(rowList);
-        			}
-        		}
+        		rowList = new ArrayList<Object>();
+        		String idLabel = tmp[0].trim();
+        		rowList.add(idLabel);
+        		rowList.add(idLabel);
+        		String myClass = tmp[1].trim();
+        		rowList.add(myClass.substring(1, tmp[1].length() - 1));
+        		rowList.add(map.get(idLabel));
+        		dataList.add(rowList);
         	}
         }
         br.close();

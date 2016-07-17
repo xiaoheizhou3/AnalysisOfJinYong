@@ -64,7 +64,10 @@ public class Label {
         	int maxCount = 0;
         	String label = new String("");
         	for(String name : nameList){
-        		//标签出现次数相同时，取rank值更大的
+        		/*
+        		 * 如果标签出现次数比当前最大次数大，更新标签和最大值
+        		 * 如果标签出现次数相同时，取rank值更大的作为标签
+        		 */
         		if( (mapLabel.get(name) > maxCount) ||
         			(mapLabel.get(name) == maxCount && mapRank.get(name) > mapRank.get(label))){
             			maxCount = mapLabel.get(name);

@@ -3,7 +3,6 @@ package pageRank;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.*;
-//import org.apache.hadoop.io.DoubleWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
@@ -12,26 +11,24 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 import java.io.*;
-//import java.util.StringTokenizer;
 
 public class PageRank {
 
 	public static class PageRankMapper extends Mapper<Object, Text, Text, Text> {
 		public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
 			String line = value.toString();
-			String[] tuple = line.split("\t");
-			String A = tuple[0];
-			double pr = Double.parseDouble(tuple[1]);//上一轮迭代的rank值
-			
+			String[] tuple = line.split("\t");//tuple[0]为人名,tuple[1]为上一轮迭代的rank值,tuple[2]为人名列表(B | weight)	
 			if (tuple.length > 2) {
+				String A = tuple[0];
+				double pr = Double.parseDouble(tuple[1]);
 				String[] array = tuple[2].split(" | ");
-				for (int i = 0; i < array.length; i++) {
+				for (int i = 0; i < array.length; i++){
 					String[] tmp = array[i].split(",");
 					if(tmp.length >= 2){
-						String link = tmp[0];
+						String name = tmp[0];
 						double linkPr = Double.parseDouble(tmp[1]);
-						String prValue = A + "," + pr * linkPr;
-						context.write(new Text(link), new Text(prValue));
+						String prValue = A + "," + pr * linkPr;//计算出A给name投的票数
+						context.write(new Text(name), new Text(prValue));
 					}
 				}
 				context.write(new Text(A), new Text("#" + tuple[2]));
@@ -44,14 +41,14 @@ public class PageRank {
 			String links = "";
 			double pagerank = 0.0;
 			
-			for (Text value : values) {
+			for(Text value : values){
 				String tmp = value.toString();
-				if (tmp.startsWith("#")) {
+				if(tmp.startsWith("#")) {
 					links = "\t" + tmp.substring(tmp.indexOf("#") + 1);
 					continue;
 				}
 				String[] tuple = tmp.split(",");
-				if (tuple.length > 1) {
+				if(tuple.length > 1){
 					pagerank += Double.parseDouble(tuple[1]);
 				}
 			}
