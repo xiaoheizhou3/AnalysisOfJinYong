@@ -63,13 +63,6 @@ public class WordCut {
         }
         //map方法
         public void map(Object key,Text value,Context context)throws IOException,InterruptedException {
-            /*
-             * value是小说的一段，mapreduce自动将整部小说切分成了一段一段的，每次传入map的都正好是一段
-             * DicAnalysis.parse()是ansj_seg分词工具提供的方法，进行分词，分词后的结果存储在List结构中
-             * List里面存储的是一个个分好的词
-             * 遍历List，如果词性为"userDefine"，即我们刚才从人名列表导入的词，那么我们就从小说中按顺序识别出了一个个的人名
-             * 将人名加入到str中，以空格隔开
-             */
         	StringBuffer str = new StringBuffer();
             List<Term> names = DicAnalysis.parse(value.toString()).getTerms();
             for(Term name : names) {
@@ -78,13 +71,10 @@ public class WordCut {
                     str.append(" ");
                 }
             }
-            
             //如果str不为空，即这段话至少含有一个人名
             if(str.length() != 0){
-            	/*
-            	 * 将两个不同的人关联起来，加入到hash表中
-            	 * 格式为：胡斐#戚芳
-            	 */
+            	 //将两个不同的人关联起来，加入到hash表中
+            	 //格式为：胡斐#戚芳
             	Set<String>  result = new HashSet<>();
             	String[] tmp = str.toString().split(" ");
             	for(int i = 0; i < tmp.length; i++){
@@ -95,9 +85,6 @@ public class WordCut {
             			}
             		}
             	}
-            	/*
-            	 * 输出（A， 和A关联的所有人物）
-            	 */
             	for(String t : result){
             		String[] res = t.split("#");
             		context.write(new Text(res[0]), new Text(res[1]));
