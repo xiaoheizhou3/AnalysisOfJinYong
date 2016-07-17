@@ -39,7 +39,6 @@ public class Label {
 	}
 
 	public static class LabelReducer extends Reducer<Text, Text, Text, Text> {
-
 		public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException{
 			ArrayList<String> nameList = new ArrayList<>();//给key投票的所有人
 			HashMap<String, Integer> mapLabel = new HashMap<>();
@@ -60,7 +59,6 @@ public class Label {
         		//存储标签的rank
         		mapRank.put(nameRank[0],Double.valueOf(nameRank[1]));
         	}
-        	
         	int maxCount = 0;
         	String label = new String("");
         	for(String name : nameList){
@@ -68,13 +66,12 @@ public class Label {
         		 * 如果标签出现次数比当前最大次数大，更新标签和最大值
         		 * 如果标签出现次数相同时，取rank值更大的作为标签
         		 */
-        		if( (mapLabel.get(name) > maxCount) ||
-        			(mapLabel.get(name) == maxCount && mapRank.get(name) > mapRank.get(label))){
-            			maxCount = mapLabel.get(name);
-            			label = new String(name);
+        		if((mapLabel.get(name) > maxCount)||(mapLabel.get(name) == maxCount && mapRank.get(name) > mapRank.get(label))){
+            		maxCount = mapLabel.get(name);
+            		label = new String(name);
         		}
         	}
-			context.write(key, new Text("#" + label + "," + mapRank.get(label) + "#\t" + link));//key "\t" #标签# "\t" 人名列表
+        	context.write(key, new Text("#" + label + "," + mapRank.get(label) + "#\t" + link));//key "\t" #标签# "\t" 人名列表
 		}
 	}
     
