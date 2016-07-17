@@ -1,7 +1,7 @@
 package pageRank;
 
 public class Driver {
-	private static int times = 10;
+	private static int times = 20;
 	public static void main(String[] args) throws Exception{
 		//pagerank‘§¥¶¿Ì
 		String[] forItr = { "", ""};

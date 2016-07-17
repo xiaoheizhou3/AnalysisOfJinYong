@@ -15,33 +15,7 @@ import java.io.*;
 //import java.util.StringTokenizer;
 
 public class PageRank {
-	/*
-	public static class PageRankMapper extends Mapper<Object, Text, Text, Text> {
-		protected void map(Object key, Text value,Context context)throws IOException,InterruptedException {
-			StringTokenizer itr = new StringTokenizer(value.toString());
-			while(itr.hasMoreTokens()){
-				String tmp = itr.nextToken();
-				String[] namePrList = tmp.split(" | ");
-				for(int i = 0; i < namePrList.length; i++){
-					String[] namePr = namePrList[i].split(",");
-					if(namePr.length > 1)
-						context.write(new Text(namePr[0]), new Text(namePr[1]));
-				}
-			}
-		}
-	}	
 
-	public static class PageRankReducer extends Reducer<Text, Text, Text, Text> {
-		protected void reduce(Text key, Iterable<Text> values, Context context )throws IOException,InterruptedException {
-			double pr = 0.0;
-			for(Text t : values){
-				pr += Double.parseDouble(t.toString());
-			}
-			double res = pr * 0.85 + 0.15;
-			context.write(key, new Text(String.format("%.8f", res)));
-		}
-	}
-	*/
 	public static class PageRankMapper extends Mapper<Object, Text, Text, Text> {
 		public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
 			String line = value.toString();
@@ -81,7 +55,7 @@ public class PageRank {
 					pagerank += Double.parseDouble(tuple[1]);
 				}
 			}
-			pagerank = (double)0.15 + 0.85 * pagerank;
+			pagerank = pagerank * 0.85 + 0.15;
 			context.write(new Text(key), new Text(String.valueOf(pagerank) + links));
 		}
 	}
